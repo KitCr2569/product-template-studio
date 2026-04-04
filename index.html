@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Template Studio — Auto Background Removal & Template Compositing</title>
+  <meta name="description" content="Automatically remove product backgrounds and place them on premium templates with realistic shadows. No Photoshop needed.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header id="header">
+      <div class="header-glow"></div>
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <rect x="2" y="2" width="28" height="28" rx="8" fill="url(#logoGrad)" />
+              <path d="M10 16L14 20L22 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <defs>
+                <linearGradient id="logoGrad" x1="2" y1="2" x2="30" y2="30">
+                  <stop stop-color="#8B5CF6"/>
+                  <stop offset="1" stop-color="#6366F1"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div>
+            <h1>Product Template Studio</h1>
+            <p class="tagline">ตัดพื้นหลัง · วางบนเทมเพลต · ใส่เงาอัตโนมัติ</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+      <!-- Left Panel: Uploads -->
+      <aside class="panel upload-panel">
+        <h2 class="panel-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          อัปโหลดภาพ
+        </h2>
+
+        <!-- Template Upload -->
+        <div class="upload-card" id="template-upload-card">
+          <input type="file" accept="image/*" id="template-input" class="file-input">
+          <div class="upload-placeholder" id="template-placeholder">
+            <div class="upload-icon-wrap">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M3 16l5-5 4 4 4-4 5 5"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+              </svg>
+            </div>
+            <h3>เทมเพลต</h3>
+            <p>ลากไฟล์มาวาง หรือคลิกเพื่อเลือก</p>
+            <span class="upload-badge">PNG, JPG, WebP</span>
+          </div>
+          <div class="upload-preview hidden" id="template-preview-wrap">
+            <img id="template-preview" alt="Template preview">
+            <button class="remove-btn" id="remove-template" title="ลบเทมเพลต">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+            <button class="save-template-btn" id="save-template" title="บันทึกเทมเพลตและค่าตั้งต้นเก็บไว้ใช้ครั้งหน้า">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                <polyline points="17 21 17 13 7 13 7 21"/>
+                <polyline points="7 3 7 8 15 8"/>
+              </svg>
+            </button>
+            <span class="preview-label">เทมเพลต</span>
+          </div>
+        </div>
+
+        <!-- Product Upload -->
+        <div class="upload-card" id="product-upload-card">
+          <input type="file" accept="image/*" id="product-input" class="file-input">
+          <div class="upload-placeholder" id="product-placeholder">
+            <div class="upload-icon-wrap product-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+              </svg>
+            </div>
+            <h3>ภาพสินค้า</h3>
+            <p>ลากไฟล์มาวาง หรือคลิกเพื่อเลือก</p>
+            <span class="upload-badge">รองรับทุกรูปแบบ</span>
+          </div>
+          <div class="upload-preview hidden" id="product-preview-wrap">
+            <img id="product-preview" alt="Product preview">
+            <button class="remove-btn" id="remove-product" title="ลบภาพสินค้า">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+            <span class="preview-label">สินค้า (ตัดพื้นหลังแล้ว)</span>
+          </div>
+        </div>
+
+        <!-- BG Removal Settings -->
+        <div class="bg-settings">
+          <h3 class="bg-settings-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            ตัดพื้นหลัง
+          </h3>
+
+          <!-- Method Selector -->
+          <div class="method-selector">
+            <button class="method-btn active" id="method-removebg" data-method="removebg">
+              <span class="method-dot"></span>
+              remove.bg
+              <span class="method-badge pro">PRO</span>
+            </button>
+            <button class="method-btn" id="method-local" data-method="local">
+              <span class="method-dot"></span>
+              Local AI
+              <span class="method-badge">FREE</span>
+            </button>
+          </div>
+
+          <!-- API Key Input (for remove.bg) -->
+          <div class="api-key-section" id="api-key-section">
+            <label for="api-key-input" class="api-key-label">API Key</label>
+            <div class="api-key-input-wrap">
+              <input type="password" id="api-key-input" placeholder="ใส่ remove.bg API Key" autocomplete="off">
+              <button class="api-key-toggle" id="api-key-toggle" title="แสดง/ซ่อน">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+              <button class="api-key-save" id="api-key-save" title="บันทึก API Key">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                  <polyline points="17 21 17 13 7 13 7 21"/>
+                  <polyline points="7 3 7 8 15 8"/>
+                </svg>
+              </button>
+            </div>
+            <a href="https://www.remove.bg/api#api-key" target="_blank" class="api-key-link">
+              สมัคร API Key ฟรี (50 ภาพ/เดือน) →
+            </a>
+          </div>
+
+          <!-- Skip BG Removal Option -->
+          <label class="checkbox-wrap" id="skip-bg-wrap">
+            <input type="checkbox" id="skip-bg-removal">
+            <span class="checkmark"></span>
+            <span>ข้ามตัดพื้นหลัง (ภาพมีพื้นใสแล้ว)</span>
+          </label>
+        </div>
+      </aside>
+
+      <!-- Center: Preview -->
+      <section class="panel preview-panel">
+        <h2 class="panel-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="20" height="20" rx="2"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          ตัวอย่างผลลัพธ์
+        </h2>
+
+        <!-- Canvas Toolbar -->
+        <div class="canvas-toolbar" id="canvas-toolbar">
+          <button class="toolbar-btn" id="btn-move" title="เลื่อนตำแหน่ง (M)" data-active="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="5 9 2 12 5 15"/>
+              <polyline points="9 5 12 2 15 5"/>
+              <polyline points="15 19 12 22 9 19"/>
+              <polyline points="19 9 22 12 19 15"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <line x1="12" y1="2" x2="12" y2="22"/>
+            </svg>
+            เลื่อน
+          </button>
+          <button class="toolbar-btn" id="btn-eraser" title="ยางลบ (E)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 20H7L3 16c-.8-.8-.8-2 0-2.8L14.6 1.6c.8-.8 2-.8 2.8 0L21.4 5.6c.8.8.8 2 0 2.8L12 18"/>
+              <line x1="2" y1="20" x2="22" y2="20"/>
+            </svg>
+            ยางลบ
+          </button>
+          <div class="toolbar-separator"></div>
+          <button class="toolbar-btn" id="btn-undo" title="ย้อนกลับ (Ctrl+Z)" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="1 4 1 10 7 10"/>
+              <path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
+            </svg>
+            ย้อนกลับ
+          </button>
+          <div class="toolbar-separator"></div>
+          <div class="eraser-size-wrap hidden" id="eraser-size-wrap">
+            <label>ขนาด</label>
+            <input type="range" id="eraser-size" min="5" max="80" value="25" step="1">
+            <span id="eraser-size-val">25</span>
+          </div>
+        </div>
+
+        <div class="canvas-container" id="canvas-container">
+          <canvas id="result-canvas"></canvas>
+          <div class="canvas-empty" id="canvas-empty">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3">
+              <rect x="2" y="2" width="20" height="20" rx="2"/>
+              <path d="M2 16l5-5 4 4 4-4 5 5"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+            </svg>
+            <p>อัปโหลดเทมเพลตและภาพสินค้าเพื่อเริ่มต้น</p>
+          </div>
+          <div class="drag-hint hidden" id="drag-hint">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 9l7-7 7 7M5 15l7 7 7-7"/>
+            </svg>
+            ลากเพื่อเลื่อนตำแหน่งสินค้า
+          </div>
+          <div id="eraser-cursor" class="eraser-cursor hidden"></div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 20px;">
+          <button class="download-btn" id="apply-btn" disabled style="flex: 1; background: #8B5CF6; color: white;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            นำไปใช้
+          </button>
+          
+          <!-- Download Button -->
+          <button class="download-btn" id="download-btn" disabled style="flex: 1; margin-top: 0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            ดาวน์โหลด PNG
+          </button>
+        </div>
+      </section>
+
+      <!-- Right Panel: Controls -->
+      <aside class="panel controls-panel">
+        <h2 class="panel-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+          ปรับแต่ง
+        </h2>
+
+        <!-- Product Controls -->
+        <div class="control-group">
+          <h3 class="control-group-title">ตำแหน่งสินค้า</h3>
+          
+          <div class="control-item">
+            <div class="control-header">
+              <label for="ctrl-pos-x">ตำแหน่ง X</label>
+              <span class="control-value" id="val-pos-x">50%</span>
+            </div>
+            <input type="range" id="ctrl-pos-x" min="10" max="90" value="50" step="0.5">
+          </div>
+
+          <div class="control-item">
+            <div class="control-header">
+              <label for="ctrl-pos-y">ตำแหน่ง Y</label>
+              <span class="control-value" id="val-pos-y">58%</span>
+            </div>
+            <input type="range" id="ctrl-pos-y" min="20" max="95" value="58" step="0.5">
+          </div>
+
+          <div class="control-item">
+            <div class="control-header">
+              <label for="ctrl-scale">ขนาด</label>
+              <span class="control-value" id="val-scale">45%</span>
+            </div>
+            <input type="range" id="ctrl-scale" min="10" max="90" value="45" step="0.5">
+          </div>
+        </div>
+
+        <!-- Shadow Controls -->
+        <div class="control-group">
+          <h3 class="control-group-title">เงา</h3>
+
+          <div class="control-item">
+            <div class="control-header">
+              <label for="ctrl-shadow-blur">ความเบลอ</label>
+              <span class="control-value" id="val-shadow-blur">20px</span>
+            </div>
+            <input type="range" id="ctrl-shadow-blur" min="0" max="60" value="20" step="1">
+          </div>
+
+          <div class="control-item">
+            <div class="control-header">
+              <label for="ctrl-shadow-opacity">ความเข้ม</label>
+              <span class="control-value" id="val-shadow-opacity">30%</span>
+            </div>
+            <input type="range" id="ctrl-shadow-opacity" min="0" max="80" value="30" step="1">
+          </div>
+
+          <div class="control-item">
+            <div class="control-header">
+              <label for="ctrl-shadow-offset">เลื่อนลง</label>
+              <span class="control-value" id="val-shadow-offset">8px</span>
+            </div>
+            <input type="range" id="ctrl-shadow-offset" min="-20" max="40" value="8" step="1">
+          </div>
+
+          <div class="control-item">
+            <div class="control-header">
+              <label for="ctrl-shadow-spread">ขนาดเงา</label>
+              <span class="control-value" id="val-shadow-spread">35%</span>
+            </div>
+            <input type="range" id="ctrl-shadow-spread" min="10" max="80" value="35" step="1">
+          </div>
+        </div>
+
+        <!-- Reset -->
+        <button class="reset-btn" id="reset-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="1 4 1 10 7 10"/>
+            <path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
+          </svg>
+          รีเซ็ตค่าเริ่มต้น
+        </button>
+      </aside>
+    </main>
+
+    <!-- Processing Overlay -->
+    <div class="overlay hidden" id="processing-overlay">
+      <div class="overlay-card">
+        <div class="spinner"></div>
+        <h3 id="processing-title">กำลังตัดพื้นหลัง...</h3>
+        <p id="processing-subtitle">โปรดรอสักครู่ ระบบกำลังประมวลผลภาพ</p>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <p class="processing-note">ครั้งแรกอาจใช้เวลานานขึ้นเพื่อดาวน์โหลดโมเดล AI</p>
+      </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
