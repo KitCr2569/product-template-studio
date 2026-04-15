@@ -815,9 +815,10 @@ function setupApply() {
   if (!dom.applyBtn) return;
   
   const urlParams = new URLSearchParams(window.location.search);
-  const isOpenFromAdmin = window.opener || urlParams.has('target');
+  const isIframe = window.parent !== window;
+  const isOpenFromAdmin = window.opener || isIframe || urlParams.has('target');
   
-  // Only show apply button if there is a window opener (e.g. opened from CRM window)
+  // Only show apply button if opened from admin (popup or iframe)
   if (isOpenFromAdmin) {
     dom.applyBtn.style.display = 'flex';
   } else {
@@ -836,27 +837,33 @@ function setupApply() {
       const reader = new FileReader();
       reader.onloadend = () => {
         const dataUrl = reader.result;
+        const urlParams = new URLSearchParams(window.location.search);
+        const messageData = {
+          type: 'TEMPLATE_STUDIO_RESULT',
+          index: urlParams.get('index'),
+          imageDataUrl: dataUrl
+        };
         
-        // Ensure opener is still valid
         try {
-          if (window.opener) {
-            // Send message
-            const urlParams = new URLSearchParams(window.location.search);
-            window.opener.postMessage({
-              type: 'TEMPLATE_STUDIO_RESULT',
-              index: urlParams.get('index'),
-              imageDataUrl: dataUrl
-            }, '*');
-            
+          if (isIframe && window.parent) {
+            // Embedded as iframe — send to parent
+            window.parent.postMessage(messageData, '*');
+            showToast('ส่งภาพไปยังร้านค้าเรียบร้อย!', 'success');
+            dom.applyBtn.innerHTML = '✅ ส่งสำเร็จ!';
+            setTimeout(() => {
+              dom.applyBtn.innerHTML = originalContent;
+              dom.applyBtn.disabled = false;
+            }, 2000);
+          } else if (window.opener) {
+            // Opened as popup — send to opener
+            window.opener.postMessage(messageData, '*');
             showToast('ส่งภาพไปยังร้านค้าเรียบร้อย!', 'success');
             dom.applyBtn.innerHTML = 'ส่งสำเร็จ! กำลังปิด...';
-            
             setTimeout(() => {
               window.close();
             }, 1000);
           } else {
-            // Error when window.opener is null
-            showToast('ไม่สามารถส่งรูปได้ (แท็บแอดมินถูกปิดไปแล้ว)', 'error');
+            showToast('ไม่สามารถส่งรูปไฟล์ (แท็บแม่ไม่ถูกต้องไปแล้ว)', 'error');
             dom.applyBtn.innerHTML = originalContent;
             dom.applyBtn.disabled = false;
           }
