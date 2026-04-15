@@ -815,11 +815,10 @@ function setupApply() {
   if (!dom.applyBtn) return;
   
   const urlParams = new URLSearchParams(window.location.search);
-  const isIframe = window.parent !== window;
-  const isOpenFromAdmin = window.opener || isIframe || urlParams.has('target');
+  const hasTarget = urlParams.has('target');
   
-  // Only show apply button if opened from admin (popup or iframe)
-  if (isOpenFromAdmin) {
+  // Show apply button if opened from admin (popup, iframe, or has target param)
+  if (window.opener || window.parent !== window || hasTarget) {
     dom.applyBtn.style.display = 'flex';
   } else {
     dom.applyBtn.style.display = 'none';
@@ -828,7 +827,6 @@ function setupApply() {
   dom.applyBtn.addEventListener('click', () => {
     if (!dom.canvas.width || !dom.canvas.height) return;
 
-    // Cache original content to restore on error
     const originalContent = dom.applyBtn.innerHTML;
     dom.applyBtn.disabled = true;
     dom.applyBtn.innerHTML = 'กำลังประมวลผล...';
@@ -837,38 +835,48 @@ function setupApply() {
       const reader = new FileReader();
       reader.onloadend = () => {
         const dataUrl = reader.result;
-        const urlParams = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(window.location.search);
         const messageData = {
           type: 'TEMPLATE_STUDIO_RESULT',
-          index: urlParams.get('index'),
+          index: params.get('index'),
           imageDataUrl: dataUrl
         };
         
+        // Determine target: parent (iframe) or opener (popup)
+        let target = null;
         try {
-          if (isIframe && window.parent) {
-            // Embedded as iframe — send to parent
-            window.parent.postMessage(messageData, '*');
+          if (window.parent && window.parent !== window) {
+            target = window.parent;
+          }
+        } catch (e) {
+          // cross-origin parent access might throw
+        }
+        if (!target && window.opener) {
+          target = window.opener;
+        }
+        
+        if (target) {
+          try {
+            target.postMessage(messageData, '*');
             showToast('ส่งภาพไปยังร้านค้าเรียบร้อย!', 'success');
-            dom.applyBtn.innerHTML = '✅ ส่งสำเร็จ!';
-            setTimeout(() => {
-              dom.applyBtn.innerHTML = originalContent;
-              dom.applyBtn.disabled = false;
-            }, 2000);
-          } else if (window.opener) {
-            // Opened as popup — send to opener
-            window.opener.postMessage(messageData, '*');
-            showToast('ส่งภาพไปยังร้านค้าเรียบร้อย!', 'success');
-            dom.applyBtn.innerHTML = 'ส่งสำเร็จ! กำลังปิด...';
-            setTimeout(() => {
-              window.close();
-            }, 1000);
-          } else {
-            showToast('ไม่สามารถส่งรูปไฟล์ (แท็บแม่ไม่ถูกต้องไปแล้ว)', 'error');
+            
+            if (window.opener && target === window.opener) {
+              dom.applyBtn.innerHTML = 'ส่งสำเร็จ! กำลังปิด...';
+              setTimeout(() => window.close(), 1000);
+            } else {
+              dom.applyBtn.innerHTML = '✅ ส่งสำเร็จ!';
+              setTimeout(() => {
+                dom.applyBtn.innerHTML = originalContent;
+                dom.applyBtn.disabled = false;
+              }, 2000);
+            }
+          } catch (err) {
+            showToast('ส่งรูปล้มเหลว: ' + err.message, 'error');
             dom.applyBtn.innerHTML = originalContent;
             dom.applyBtn.disabled = false;
           }
-        } catch (err) {
-          showToast('ส่งรูปล้มเหลว: ' + err.message, 'error');
+        } else {
+          showToast('ไม่สามารถส่งรูปไฟล์ — กรุณาดาวน์โหลด PNG แทน', 'error');
           dom.applyBtn.innerHTML = originalContent;
           dom.applyBtn.disabled = false;
         }
