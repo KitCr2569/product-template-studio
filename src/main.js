@@ -815,10 +815,9 @@ function setupApply() {
   if (!dom.applyBtn) return;
   
   const urlParams = new URLSearchParams(window.location.search);
-  const hasTarget = urlParams.has('target');
   
-  // Show apply button if opened from admin (popup, iframe, or has target param)
-  if (window.opener || window.parent !== window || hasTarget) {
+  // Show apply button if has target param (always show when opened from admin)
+  if (urlParams.has('target')) {
     dom.applyBtn.style.display = 'flex';
   } else {
     dom.applyBtn.style.display = 'none';
@@ -842,39 +841,36 @@ function setupApply() {
           imageDataUrl: dataUrl
         };
         
-        // Determine target: parent (iframe) or opener (popup)
-        let target = null;
+        let sent = false;
+        
+        // Try sending to parent (iframe mode)
         try {
           if (window.parent && window.parent !== window) {
-            target = window.parent;
+            window.parent.postMessage(messageData, '*');
+            sent = true;
           }
-        } catch (e) {
-          // cross-origin parent access might throw
-        }
-        if (!target && window.opener) {
-          target = window.opener;
-        }
+        } catch (e) { /* cross-origin */ }
         
-        if (target) {
-          try {
-            target.postMessage(messageData, '*');
-            showToast('ส่งภาพไปยังร้านค้าเรียบร้อย!', 'success');
-            
-            if (window.opener && target === window.opener) {
-              dom.applyBtn.innerHTML = 'ส่งสำเร็จ! กำลังปิด...';
-              setTimeout(() => window.close(), 1000);
-            } else {
-              dom.applyBtn.innerHTML = '✅ ส่งสำเร็จ!';
-              setTimeout(() => {
-                dom.applyBtn.innerHTML = originalContent;
-                dom.applyBtn.disabled = false;
-              }, 2000);
-            }
-          } catch (err) {
-            showToast('ส่งรูปล้มเหลว: ' + err.message, 'error');
-            dom.applyBtn.innerHTML = originalContent;
-            dom.applyBtn.disabled = false;
+        // Try sending to opener (popup mode)
+        try {
+          if (window.opener) {
+            window.opener.postMessage(messageData, '*');
+            sent = true;
           }
+        } catch (e) { /* opener closed */ }
+        
+        if (sent) {
+          showToast('ส่งภาพไปยังร้านค้าเรียบร้อย!', 'success');
+          dom.applyBtn.innerHTML = '✅ ส่งสำเร็จ!';
+          setTimeout(() => {
+            // If opened as popup, close window
+            if (window.opener) {
+              window.close();
+            } else {
+              dom.applyBtn.innerHTML = originalContent;
+              dom.applyBtn.disabled = false;
+            }
+          }, 1500);
         } else {
           showToast('ไม่สามารถส่งรูปไฟล์ — กรุณาดาวน์โหลด PNG แทน', 'error');
           dom.applyBtn.innerHTML = originalContent;
